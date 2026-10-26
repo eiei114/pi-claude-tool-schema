@@ -1,20 +1,10 @@
-# Security Policy
+# Security
 
-## Supported versions
+This package changes the model-facing tool contract, not execution permissions.
+Aliases call the already active native Pi tool through `ctx.executeTool()`.
+Existing shell/file capabilities retain their normal host access. This package
+is not a sandbox or an approval system. It cannot audit other extensions that
+mutate tool loadouts after its hooks run.
 
-Only the latest published version receives security fixes.
-
-## Reporting a vulnerability
-
-Open a private security advisory on GitHub, or contact the maintainer by the preferred channel listed in the repository profile.
-
-Please include:
-
-- Affected version
-- Impact
-- Reproduction steps
-- Suggested fix, if known
-
-## Pi package security note
-
-Pi packages can execute code with local user permissions. Review installed packages and avoid running untrusted extensions.
+Unsupported options fail instead of being silently approximated. Report bugs
+through GitHub Issues; do not include tokens, prompts, private files, or secrets.

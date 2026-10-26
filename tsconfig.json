@@ -7,13 +7,14 @@
     "skipLibCheck": true,
     "noEmit": true,
     "types": [
-      "node"
+      "node",
+      "bun"
     ],
     "allowImportingTsExtensions": true
   },
   "include": [
     "extensions/**/*.ts",
     "lib/**/*.ts",
-    "tests/**/*.mjs"
+    "tests/**/*.ts"
   ]
 }
