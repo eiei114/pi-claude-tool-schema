@@ -60,3 +60,24 @@ test("aliases are hidden and execution is blocked on non-Claude, including model
   expect(f.tools.get("Read").prepareLoadout({ declared: [{ name: "read" }] })).toEqual({ hiddenDeclarations: [] });
   await expect(f.tools.get("Read").execute("outer", { file_path: "x" }, undefined, undefined, {})).rejects.toThrow("inactive for this model");
 });
+
+test("turn boundary removes stale Write if the host disabled native write", () => {
+  const f = fixture();
+  const ctx = { model: { provider: "claude-cli", id: "claude-opus-5-5" } };
+  f.events.get("session_start")({}, ctx);
+  f.pi.setActiveTools(f.pi.getActiveTools().filter(n => n !== "write"));
+  expect(f.pi.getActiveTools()).toContain("Write");
+  f.events.get("before_agent_start")({}, ctx);
+  expect(f.pi.getActiveTools()).not.toContain("Write");
+  expect(f.pi.getActiveTools()).not.toContain("write");
+  f.pi.setActiveTools([...f.pi.getActiveTools(), "write"]);
+  f.events.get("before_agent_start")({}, ctx);
+  expect(f.pi.getActiveTools()).toContain("Write");
+});
+
+test("legacy alias-only reload never grants missing native capabilities", () => {
+  const f = fixture();
+  f.pi.setActiveTools(["Read", "Write", "Bash", "custom"]);
+  f.events.get("session_start")({}, { model: { provider: "claude-cli", id: "claude-opus-5-5" } });
+  expect(f.pi.getActiveTools()).toEqual(["custom"]);
+});
