@@ -68,6 +68,21 @@ This is a **supported subset**, not exact current Claude Code parity:
 Official references: [Agent SDK tool inputs](https://code.claude.com/docs/en/agent-sdk/typescript)
 and [Claude Code tools](https://code.claude.com/docs/en/tools-reference).
 
+## Migrating from replacement-style adapters
+
+If a previous adapter removed native `write`, `edit`, or `bash` from the active
+loadout, **fully restart the Pi process** when replacing it with this package.
+Pi's `/reload` intentionally preserves disabled tools; it does not restore all
+configured defaults. Renaming `Write` does not restore the missing native `write`.
+Likewise, `/new` is not a guaranteed reset of extension state/tool permissions.
+
+This package reconciles its aliases at each turn boundary. If the host disables
+`write`, the next turn no longer advertises `Write`. Explicitly re-enabling a
+native capability makes its alias available again. It never restores capabilities
+automatically: doing so could widen a deliberately read-only role. The system
+prompt is rebuilt through Pi's normal active-tool machinery, not replaced with a
+Claude Code system prompt. Changing prompt prose cannot grant a missing tool.
+
 ## Performance
 
 No benchmark has established savings for **this implementation**. Prior local

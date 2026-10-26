@@ -25,11 +25,19 @@ export default function (pi: ExtensionAPI) {
   register("hidden");
   const sync = (model: ModelIdentity | undefined) => {
     const active = pi.getActiveTools();
-    enabled = isClaudeModel(model);
+    const nextEnabled = isClaudeModel(model);
     // Hidden tools cannot be discovered or invoked through JS codemode either.
-    register(enabled ? "codemode" : "hidden");
-    pi.setActiveTools(selectTools(active, enabled));
+    if (nextEnabled !== enabled) {
+      enabled = nextEnabled;
+      register(enabled ? "codemode" : "hidden");
+    }
+    const next = selectTools(active, enabled);
+    if (next.length !== active.length || next.some((name, index) => name !== active[index]))
+      pi.setActiveTools(next);
   };
   pi.on("session_start", (_event, ctx) => sync(ctx.model));
   pi.on("model_select", (event) => sync(event.model));
+  // Other extensions can change capabilities between turns. Reconcile aliases,
+  // never re-enable a native capability that the host intentionally disabled.
+  pi.on("before_agent_start", (_event, ctx) => sync(ctx.model));
 }
