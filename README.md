@@ -20,8 +20,16 @@ Remove other extensions that register `Read`, `Write`, `Edit`, `Bash`, `Glob`, o
 `Grep` first (including `pi-familiar-tools`). Duplicate names fail visibly rather
 than silently replacing another package. No npm publication is configured.
 
-Select a model whose ID contains `claude`, then restart Pi or `/reload`.
-Other model families keep their existing tool loadout. Set
+Activation recognizes provider `anthropic`, Claude-specific providers such as
+`claude-cli` and `claude-bridge`, or recognizable Claude model IDs even through
+other providers (including `anthropic/claude-*` and Bedrock `*.claude-*`). An
+Anthropic-compatible API alone does not qualify a third-party model.
+
+Other model families keep their existing tool loadout. Aliases are hidden from
+both direct model calls and JavaScript codemode while inactive. Switching between
+Claude and Codex in the same session updates this scope. `pi-codex-conversion`
+can remain installed: this package registers no Codex tools and leaves its active
+loadout alone when a Codex model is selected. Set
 `PI_CLAUDE_TOOL_SCHEMA=off` before starting Pi to disable this package for one process.
 
 ## Contract
